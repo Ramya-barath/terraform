@@ -120,7 +120,12 @@ resource "aws_security_group" "public_sg1" {
   provider = "aws.us_east1"
   vpc_id = aws_vpc.vpc1.id
   name = "public_sg1"
-
+  ingress {
+    from_port = 443
+    to_port = 443
+    protocol = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
   ingress {
     from_port = 80
     to_port = 80
@@ -134,13 +139,14 @@ resource "aws_security_group" "public_sg1" {
     protocol = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
-
+  
   egress {
     from_port = 0
     to_port = 0
     protocol = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
+
 }
 
 resource "aws_security_group" "private_sg1" {
@@ -167,7 +173,12 @@ resource "aws_security_group" "public_sg2" {
   provider = "aws.us_east2"
   vpc_id = aws_vpc.vpc2.id
   name = "public_sg2"
-
+   ingress {
+    from_port = 443
+    to_port = 443
+    protocol = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
   ingress {
     from_port = 80
     to_port = 80
@@ -212,11 +223,11 @@ resource "aws_security_group" "private_sg2" {
 
 resource "aws_instance" "public_instance1" {
   provider = "aws.us_east1"
-  ami = " ami-04b4f1a9cf54c11d0" # Replace with your preferred AMI ID
+  ami = "ami-04b4f1a9cf54c11d0" # Replace with your preferred AMI ID
   instance_type = "t2.micro"
   subnet_id = aws_subnet.public_subnet1.id
   associate_public_ip_address = true
-  security_groups = [aws_security_group.public_sg1.name]
+  security_groups = [aws_security_group.public_sg1.id]
 
   user_data = <<-EOF
               #!/bin/bash
@@ -229,10 +240,10 @@ resource "aws_instance" "public_instance1" {
 
 resource "aws_instance" "private_instance1" {
   provider = "aws.us_east1"
-  ami = " ami-04b4f1a9cf54c11d0" # Replace with your preferred AMI ID
+  ami = "ami-04b4f1a9cf54c11d0" # Replace with your preferred AMI ID
   instance_type = "t2.micro"
   subnet_id = aws_subnet.private_subnet1.id
-  security_groups = [aws_security_group.private_sg1.name]
+  security_groups = [aws_security_group.private_sg1.id]
 
   user_data = <<-EOF
               #!/bin/bash
@@ -245,11 +256,11 @@ resource "aws_instance" "private_instance1" {
 
 resource "aws_instance" "public_instance2" {
   provider = "aws.us_east2"
-  ami = " ami-0cb91c7de36eed2cb" # Replace with your preferred AMI ID
+  ami = "ami-0cb91c7de36eed2cb" # Replace with your preferred AMI ID
   instance_type = "t2.micro"
   subnet_id = aws_subnet.public_subnet2.id
   associate_public_ip_address = true
-  security_groups = [aws_security_group.public_sg2.name]
+  security_groups = [aws_security_group.public_sg2.id]
 
   user_data = <<-EOF
               #!/bin/bash
@@ -262,10 +273,10 @@ resource "aws_instance" "public_instance2" {
 
 resource "aws_instance" "private_instance2" {
   provider = "aws.us_east2"
-  ami = " ami-0cb91c7de36eed2cb" # Replace with your preferred AMI ID
+  ami = "ami-0cb91c7de36eed2cb" # Replace with your preferred AMI ID
   instance_type = "t2.micro"
   subnet_id = aws_subnet.private_subnet2.id
-  security_groups = [aws_security_group.private_sg2.name]
+  security_groups = [aws_security_group.private_sg2.id]
 
   user_data = <<-EOF
               #!/bin/bash
